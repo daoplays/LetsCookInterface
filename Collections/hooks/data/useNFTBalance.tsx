@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
-import { AssetWithMetadata } from "../../pages/collection/[pageName]";
 import { Key, getAssetV1GpaBuilder, updateAuthority, AssetV1, fetchAssetV1, deserializeAssetV1 } from "@metaplex-foundation/mpl-core";
 import type { RpcAccount, PublicKey as umiKey } from "@metaplex-foundation/umi";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
@@ -11,6 +10,12 @@ import { Config } from "../../components/Solana/constants";
 interface UseTokenBalanceProps {
     collectionAddress: PublicKey | null;
 }
+
+export interface AssetWithMetadata {
+    asset: AssetV1;
+    metadata: any;
+}
+
 
 const useNFTBalance = (props: UseTokenBalanceProps | null) => {
     // State to store the token balance and any error messages
