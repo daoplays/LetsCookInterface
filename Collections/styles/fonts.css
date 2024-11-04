@@ -1,0 +1,80 @@
+@font-face {
+    font-family: "Pokemon";
+    src:
+        local("Pokemon"),
+        url(/fonts/pokemon_pixel_font.woff) format("woff");
+}
+
+@font-face {
+    font-family: "ChalkBoard";
+    src:
+        local("ChalkBoard"),
+        url(/fonts/ChalkBoard.woff2) format("woff2");
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+}
+
+@font-face {
+    font-family: "singlanguagefont";
+    src:
+        local("singlanguagefont"),
+        url(/fonts/singlanguagefont.woff) format("woff");
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+}
+
+@font-face {
+    font-family: "ComicNeue";
+    src:
+        local("ComicNeue"),
+        url(/fonts/ComicNeue.ttf) format("truetype");
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+}
+
+@font-face {
+    font-family: "Kufam";
+    src:
+        local("Kufam"),
+        url(/fonts/Kufam.ttf) format("truetype");
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+}
+
+@font-face {
+    font-family: "KGSummerSunshineBlackout";
+    src:
+        local("KGSummerSunshineBlackout"),
+        url(/fonts/KGSummerSunshineBlackout.woff2) format("woff2");
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+}
+
+@font-face {
+    font-family: "ReemKufiRegular";
+    src:
+        local("ReemKufiRegular"),
+        url(/fonts/ReemKufiRegular.woff2) format("woff2");
+    /* other formats include: 'woff2', 'truetype, 'opentype',
+                              'embedded-opentype', and 'svg' */
+}
+
+.font-face-pk {
+    font-family: "Pokemon";
+}
+
+.font-face-kg {
+    font-family: "Kufam", sans-serif;
+}
+
+.font-face-kg2 {
+    font-family: "Kufam", sans-serif;
+}
+
+.font-face-cb {
+    font-family: "ChalkBoard";
+}
+
+.font-face-rk {
+    font-family: "ReemKufiRegular";
+}

@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        Fira Sans,
+        Droid Sans,
+        Helvetica Neue,
+        sans-serif;
+    background: linear-gradient(180deg, rgba(22, 22, 22, 1) 0%, rgba(236, 35, 0, 1) 100%);
+}
+
+*::-webkit-scrollbar {
+    width: 7px;
+    height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #25262b;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #a4b0c9;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #8893aa;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.Toastify__toast-body {
+    white-space: pre-line;
+}
+
+@font-face {
+    font-family: "BadgerCustomFont";
+    /* This will be the name you use in your app */
+    src: url("/public/curatedLaunches/badgers/CCSignLanguage\ Regular.ttf") format("truetype");
+    /* Adjust the path as necessary */
+    font-weight: normal;
+    font-style: normal;
+}
+
+.text-stroke {
+    position: relative;
+    color: transparent;
+    /* Make text color transparent */
+    font-size: 4rem;
+    /* Adjust font size as needed */
+    font-weight: bold;
+    /* Adjust font weight */
+    text-shadow:
+        -2px -2px 0 #fff,
+        /* Top-left */ 2px -2px 0 #fff,
+        /* Top-right */ -2px 2px 0 #fff,
+        /* Bottom-left */ 2px 2px 0 #fff;
+    /* Bottom-right */
+}
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+    }
+}

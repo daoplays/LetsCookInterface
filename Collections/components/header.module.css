@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Kufam&display=swap");
+
+.headerImage {
+    background-image: url("/images/header_fill.jpeg");
+    background-size: cover;
+    width: 100vw;
+    height: 50px;
+    font-family: "Kufam", sans-serif;
+    z-index: 999;
+}
+
+.sauce {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #683309;
+    gap: 10px;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.connect {
+    font-family: "Kufam", sans-serif;
+}
+
+@media screen and (max-width: 992px) {
+    .navBody {
+        padding-top: 7px;
+    }
+    .menubar {
+        background-color: #eddac3;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+        left: 0;
+    }
+    @font-face {
+        font-family: Dealers;
+        src: url(../public/images/Dealers\ -\ Solid.otf);
+    }
+    .connect {
+        background-color: transparent !important;
+        font-family: Dealers;
+        font-size: 35px;
+        color: #683309 !important;
+    }
+}
