@@ -1,9 +1,6 @@
 import {
-    LaunchData,
     LaunchInstruction,
     get_current_blockhash,
-    myU64,
-    send_transaction,
     serialise_basic_instruction,
     uInt32ToLEBytes,
     request_raw_account_data,
@@ -28,7 +25,6 @@ import bs58 from "bs58";
 import { LaunchKeys, LaunchFlags } from "../../components/Solana/constants";
 import useAppRoot from "../../context/useAppRoot";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
-import useMintNFT from "./useMintNFT";
 import { toast } from "react-toastify";
 
 const useMintRandom = (launchData: CollectionData, updateData: boolean = false) => {

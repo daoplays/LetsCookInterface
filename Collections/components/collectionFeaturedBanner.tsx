@@ -1,16 +1,12 @@
 import { VStack, Text, Box, HStack, Flex, Show, Tooltip, Badge, Progress } from "@chakra-ui/react";
 import { MdOutlineContentCopy } from "react-icons/md";
-import { LaunchData } from "./Solana/state";
 import Link from "next/link";
 import useResponsive from "../hooks/useResponsive";
 import Image from "next/image";
-import WoodenButton from "./Buttons/woodenButton";
 import "react-datepicker/dist/react-datepicker.css";
 import trimAddress from "../utils/trimAddress";
 import Links from "./Buttons/links";
-import { useEffect } from "react";
-import { CollectionKeys, LaunchKeys } from "./Solana/constants";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { CollectionKeys } from "./Solana/constants";
 import { useRouter } from "next/router";
 import { CollectionData } from "./collection/collectionState";
 import { getSolscanLink } from "../utils/getSolscanLink";

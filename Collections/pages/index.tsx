@@ -7,28 +7,21 @@ import {
     Tooltip,
     Link,
     Flex,
-    Card,
-    CardBody,
     InputRightElement,
     InputGroup,
     Input,
-    Center,
-    Divider,
-    Spacer,
     useDisclosure,
 } from "@chakra-ui/react";
 import { AssetV1 } from "@metaplex-foundation/mpl-core";
 import { bignum_to_num } from "../components/Solana/state";
 import { useEffect, useCallback, useState, useMemo } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useRouter } from "next/router";
 import Image from "next/image";
 import useResponsive from "../hooks/useResponsive";
 import UseWalletConnection from "../hooks/useWallet";
 import Head from "next/head";
 import { MdOutlineContentCopy } from "react-icons/md";
 import trimAddress from "../utils/trimAddress";
-import PageNotFound from "../components/pageNotFound";
 import Loader from "../components/loader";
 import CollectionFeaturedBanner from "../components/collectionFeaturedBanner";
 import useClaimNFT from "../hooks/collections/useClaimNFT";
@@ -54,7 +47,6 @@ export interface AssetWithMetadata {
 
 const Home = () => {
     const wallet = useWallet();
-    const router = useRouter();
     const  pageName  = "pepemon"
     const { xs, sm, md, lg, xl } = useResponsive();
     const { handleConnectWallet } = UseWalletConnection();
@@ -143,8 +135,6 @@ const Home = () => {
     if (!pageName) return;
 
     if (collection === null || tokenMint === null) return <Loader />;
-
-    if (!collection) return <PageNotFound />;
 
     const enoughTokenBalance = tokenBalance >= bignum_to_num(collection.swap_price) / Math.pow(10, collection.token_decimals);
 

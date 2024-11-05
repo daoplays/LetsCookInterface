@@ -5,8 +5,6 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { Config } from "../components/Solana/constants";
 import { theme } from "../chakra";
 import { useEffect, useMemo } from "react";
-import Navigation from "../components/Navigation";
-import Footer from "../components/Footer";
 import NoSSR from "../utils/NoSSR";
 import ContextProviders from "./_contexts";
 import { ToastContainer } from "react-toastify";
