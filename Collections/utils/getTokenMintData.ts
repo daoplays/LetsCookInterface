@@ -1,56 +1,8 @@
-import { getMintData } from "../components/amm/launch";
+import { getMintData } from "../components/collection/tokens";
 import { Config } from "../components/Solana/constants";
 import { MintData } from "../components/Solana/state";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { Mint, unpackMint } from "@solana/spl-token";
-
-export function serializeMint(mint: Mint): any {
-    return {
-        address: mint.address.toString(),
-        mintAuthority: mint.mintAuthority?.toString() || null,
-        supply: mint.supply.toString(),
-        decimals: mint.decimals,
-        isInitialized: mint.isInitialized,
-        freezeAuthority: mint.freezeAuthority?.toString() || null,
-        tlvData: mint.tlvData.toString("base64"),
-    };
-}
-
-export function deserializeMint(serializedMint: any): Mint {
-    return {
-        address: new PublicKey(serializedMint.address),
-        mintAuthority: serializedMint.mintAuthority ? new PublicKey(serializedMint.mintAuthority) : null,
-        supply: BigInt(serializedMint.supply),
-        decimals: serializedMint.decimals,
-        isInitialized: serializedMint.isInitialized,
-        freezeAuthority: serializedMint.freezeAuthority ? new PublicKey(serializedMint.freezeAuthority) : null,
-        tlvData: Buffer.from(serializedMint.tlvData, "base64"),
-    };
-}
-
-export function serializeMintData(mintData: MintData) {
-    return {
-        mint: serializeMint(mintData.mint),
-        uri: mintData.uri,
-        name: mintData.name,
-        symbol: mintData.symbol,
-        icon: mintData.icon,
-        extensions: mintData.extensions,
-        token_program: mintData.token_program.toString(),
-    };
-}
-
-export function deserializeMintData(serializedMintData: any): MintData {
-    return {
-        mint: deserializeMint(serializedMintData.mint),
-        uri: serializedMintData.uri,
-        name: serializedMintData.name,
-        symbol: serializedMintData.symbol,
-        icon: serializedMintData.icon,
-        extensions: serializedMintData.extensions,
-        token_program: new PublicKey(serializedMintData.token_program),
-    };
-}
+import { unpackMint } from "@solana/spl-token";
 
 const BATCH_SIZE = 100; // Solana's maximum batch size for getMultipleAccountsInfo
 

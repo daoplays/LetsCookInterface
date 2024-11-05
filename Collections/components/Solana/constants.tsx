@@ -49,8 +49,8 @@ const DevNetConfig: NetworkConfig = {
     NETWORK: "devnet",
     FEES_KEY: new PublicKey("FxVpjJ5AGY6cfCwZQP5v8QBfS4J2NPa62HbGh1Fu2LpD"),
     RAYDIUM_FEES: new PublicKey("3XMrhbv989VxAMi3DErLV9eJht1pHppW5LbKxe9fkEFR"),
-    RPC_NODE: "https://nickie-qn2k6r-fast-devnet.helius-rpc.com",
-    WSS_NODE: "wss://devnet.helius-rpc.com/?api-key=8c0a541e-cdf4-4c1e-8bf9-de66a1962d6f",
+    RPC_NODE: "https://api.devnet.solana.com",
+    WSS_NODE: "wss://api.devnet.solana.com",
     COOK_FEES: new PublicKey("FxVpjJ5AGY6cfCwZQP5v8QBfS4J2NPa62HbGh1Fu2LpD"),
     token: "SOL",
     token_image: "/images/sol.png",
@@ -72,10 +72,6 @@ const MainNetConfig: NetworkConfig = {
     skipPreflight: true,
 };
 
-export const firebaseConfig = {
-    databaseURL: "https://letscooklistings-default-rtdb.firebaseio.com/",
-};
-
 export const METAPLEX_META = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
 export const PROGRAM = new PublicKey("Cook7kyoaKaiG57VBDUjE2KuPXrWdLEu7d3FdDgsijHU");
 export const SYSTEM_KEY = new PublicKey("11111111111111111111111111111111");
@@ -89,30 +85,7 @@ export const DATA_ACCOUNT_SEED = 7571427;
 //timeout for transactions to be considered failed
 export const TIMEOUT = 30000;
 
-// set font size
-export var DEFAULT_FONT_SIZE = "30px";
-export var DUNGEON_FONT_SIZE = "20px";
-export var EMOJI_SIZE = 24;
-
-if (isMobile) {
-    DEFAULT_FONT_SIZE = "30px";
-    DUNGEON_FONT_SIZE = "10px";
-    EMOJI_SIZE = 20;
-}
-
-export const DEBUG = true;
-
 export let Config = DevNetConfig;
-
-export const enum Screen {
-    HOME_SCREEN = 0,
-    FAQ_SCREEN = 1,
-    TOKEN_SCREEN = 2,
-    LAUNCH_SCREEN = 3,
-    LAUNCH_DETAILS = 4,
-    LAUNCH_BOOK = 5,
-    LEADERBOARD = 6,
-}
 
 export enum Socials {
     Website = 0,

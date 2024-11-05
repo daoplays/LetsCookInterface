@@ -15,7 +15,6 @@ export interface AssetWithMetadata {
     metadata: any;
 }
 
-
 const useNFTBalance = (props: UseTokenBalanceProps | null) => {
     // State to store the token balance and any error messages
     const [nftBalance, setNFTBalance] = useState<number>(null);

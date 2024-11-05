@@ -4,7 +4,7 @@ import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { MintData, TokenAccount, bignum_to_num, request_token_amount } from "../../components/Solana/state";
 import useAppRoot from "../../context/useAppRoot";
-import { setMintData } from "../../components/amm/launch";
+import { setMintData } from "../../components/collection/tokens";
 
 interface UseTokenBalanceProps {
     mintAddress: PublicKey | null;

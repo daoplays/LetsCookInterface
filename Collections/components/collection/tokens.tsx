@@ -1,12 +1,9 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
-import { Center, VStack, Text, HStack, Input, chakra, Flex, Box, Switch, Tooltip } from "@chakra-ui/react";
 import {
     Mint,
     TOKEN_2022_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
     getMetadataPointerState,
     getPermanentDelegate,
-    getTokenMetadata,
     getTransferFeeConfig,
     getTransferHook,
     unpackMint,
@@ -14,20 +11,13 @@ import {
     ExtensionType,
 } from "@solana/spl-token";
 import { unpack, TokenMetadata } from "@solana/spl-token-metadata";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import styles from "../../styles/Launch.module.css";
-import { Keypair, PublicKey, Connection } from "@solana/web3.js";
+import { PublicKey, Connection } from "@solana/web3.js";
 import { toast } from "react-toastify";
 
 import { Metadata } from "@metaplex-foundation/mpl-token-metadata";
-import useResponsive from "../../hooks/useResponsive";
 import { MintData } from "../Solana/state";
-import { Config, Extensions, METAPLEX_META, NetworkConfig, WRAPPED_SOL } from "../Solana/constants";
-import ShowExtensions from "../Solana/extensions";
+import { Config, Extensions, METAPLEX_META, WRAPPED_SOL } from "../Solana/constants";
 import { fetchWithTimeout } from "../../utils/fetchWithTimeout";
-import { useConnection } from "@solana/wallet-adapter-react";
-import useTokenBalance from "../../hooks/data/useTokenBalance";
 
 export async function getMint(connection: Connection, mint_string: string): Promise<[Mint, PublicKey] | null> {
     if (mint_string === "" || !mint_string) {

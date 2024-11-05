@@ -47,7 +47,7 @@ export interface AssetWithMetadata {
 
 const Home = () => {
     const wallet = useWallet();
-    const  pageName  = "pepemon"
+    const pageName = "pepemon";
     const { xs, sm, md, lg, xl } = useResponsive();
     const { handleConnectWallet } = UseWalletConnection();
 

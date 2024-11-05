@@ -1,7 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
 import { Config } from "../components/Solana/constants";
 
-
 export const getSolscanLink = (key: PublicKey, type: string) => {
     if (!key) {
         return "";

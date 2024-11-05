@@ -1,36 +1,15 @@
-import {
-    Badge,
-    Box,
-    Button,
-    Divider,
-    HStack,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuList,
-    Show,
-    Text,
-    Tooltip,
-    VStack,
-    useDisclosure,
-} from "@chakra-ui/react";
+import { Badge, Divider, HStack, Menu, MenuButton, MenuItem, MenuList, Show, Text, Tooltip, VStack, useDisclosure } from "@chakra-ui/react";
 import { ConnectWalletButton, DisconnectWalletButton } from "./Solana/wallet";
 import { useWallet } from "@solana/wallet-adapter-react";
-import styles from "./header.module.css";
 import useResponsive from "../hooks/useResponsive";
 import Image from "next/image";
 import UseWalletConnection from "../hooks/useWallet";
-import MainButton from "./Buttons/mainButton";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useAppRoot from "../context/useAppRoot";
 import { isHomePageOnly } from "../constant/root";
 import trimAddress from "../utils/trimAddress";
-import { FaBook, FaWallet } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
-import twitter from "../public/images/Twitter.png";
-import discord from "../public/images/discord.png";
-import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { PiHamburgerFill } from "react-icons/pi";
 import { BsDiscord, BsTwitter } from "react-icons/bs";
 
@@ -40,7 +19,7 @@ function Navigation() {
     const { xs, sm, md } = useResponsive();
     const { isOpen, onToggle } = useDisclosure();
     const { handleDisconnectWallet, handleConnectWallet } = UseWalletConnection();
-    const { currentUserData, selectedNetwork, sidePanelCollapsed, setSidePanelCollapsed } = useAppRoot();
+    const { selectedNetwork } = useAppRoot();
 
     return (
         <>
@@ -58,8 +37,8 @@ function Navigation() {
                 className="relative flex w-full items-center border-b border-b-gray-600/50 bg-[#161616] bg-opacity-75 bg-clip-padding backdrop-blur-md backdrop-filter"
             >
                 <HStack>
-                    <div style={{ cursor: "pointer" }} onClick={() => setSidePanelCollapsed(!sidePanelCollapsed)} hidden={sm}>
-                        {sidePanelCollapsed ? <PiHamburgerFill size={35} color="#FE6A00" /> : <PiHamburgerFill size={35} color="#fff" />}
+                    <div style={{ cursor: "pointer" }} hidden={sm}>
+                        {<PiHamburgerFill size={35} color="#FE6A00" />}
                     </div>
                     <Text
                         fontSize={md ? "medium" : "x-large"}
@@ -134,19 +113,6 @@ function Navigation() {
                 </HStack>
 
                 <HStack gap={3}>
-                    <Tooltip label="Sauce" hasArrow fontSize="large" offset={[0, 15]}>
-                        <Link
-                            href="https://docs.letscook.wtf/features/sauce#spending-sauce-wip"
-                            target="_blank"
-                            className="flex justify-center gap-2 rounded-full bg-white px-[10px] py-1"
-                        >
-                            <Image height={sm ? 15 : 20} width={sm ? 15 : 25} src="/images/sauce.png" alt="Sauce" />
-                            <Text m={0} fontSize={sm ? "small" : "medium"}>
-                                {currentUserData === null ? 0 : currentUserData.total_points}
-                            </Text>
-                        </Link>
-                    </Tooltip>
-
                     <Show breakpoint="(min-width: 1024px)">
                         <HStack>
                             <Link href="https://twitter.com/letscook_sol" target="_blank">

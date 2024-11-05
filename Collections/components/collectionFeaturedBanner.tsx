@@ -5,7 +5,7 @@ import useResponsive from "../hooks/useResponsive";
 import Image from "next/image";
 import "react-datepicker/dist/react-datepicker.css";
 import trimAddress from "../utils/trimAddress";
-import Links from "./Buttons/links";
+import Links from "./collection/links";
 import { CollectionKeys } from "./Solana/constants";
 import { useRouter } from "next/router";
 import { CollectionData } from "./collection/collectionState";

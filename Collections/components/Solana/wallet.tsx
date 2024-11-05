@@ -1,8 +1,5 @@
-import { useCallback } from "react";
 import { Text, Box, HStack } from "@chakra-ui/react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
-import styles from "../header.module.css";
 import UseWalletConnection from "../../hooks/useWallet";
 import trimAddress from "../../utils/trimAddress";
 import { FaSignOutAlt } from "react-icons/fa";

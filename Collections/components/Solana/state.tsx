@@ -1,55 +1,14 @@
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import {
-    FixableBeetStruct,
-    BeetStruct,
-    u8,
-    u32,
-    u64,
-    bignum,
-    utf8String,
-    array,
-    coption,
-    COption,
-
-} from "@metaplex-foundation/beet";
+import { FixableBeetStruct, BeetStruct, u8, u32, u64, bignum, coption, COption } from "@metaplex-foundation/beet";
 import { publicKey } from "@metaplex-foundation/beet-solana";
-
-import { DEBUG, Config, PROGRAM, LaunchKeys, Socials, Extensions } from "./constants";
-import { Box } from "@chakra-ui/react";
-
-import { WalletDisconnectButton } from "@solana/wallet-adapter-react-ui";
-import {Mint } from "@solana/spl-token";
+import { Config, PROGRAM } from "./constants";
+import { Mint } from "@solana/spl-token";
 import BN from "bn.js";
-
 
 export function bignum_to_num(bn: bignum): number {
     let value = new BN(bn).toNumber();
 
     return value;
-}
-
-export async function get_JWT_token(): Promise<any | null> {
-    const token_url = `/.netlify/functions/jwt`;
-
-    var token_result;
-    try {
-        token_result = await fetch(token_url).then((res) => res.json());
-    } catch (error) {
-        console.log(error);
-        return null;
-    }
-
-    if (DEBUG) console.log(token_result);
-
-    return token_result;
-}
-
-export function WalletConnected() {
-    return (
-        <Box>
-            <WalletDisconnectButton className="wallet-disconnect-button" />
-        </Box>
-    );
 }
 
 // Example POST method implementation:
@@ -65,20 +24,6 @@ export async function postData(url = "", bearer = "", data = {}) {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
     return response.json(); // parses JSON response into native JavaScript objects
-}
-
-export function uInt8ToLEBytes(num: number): Buffer {
-    const bytes = Buffer.alloc(1);
-    bytes.writeUInt8(num);
-
-    return bytes;
-}
-
-export function uInt16ToLEBytes(num: number): Buffer {
-    const bytes = Buffer.alloc(2);
-    bytes.writeUInt16LE(num);
-
-    return bytes;
 }
 
 export function uInt32ToLEBytes(num: number): Buffer {
@@ -150,25 +95,6 @@ export async function send_transaction(bearer: string, encoded_transaction: stri
     return transaction_response;
 }
 
-interface SignatureResponseData {
-    id: number;
-    jsonrpc: string;
-    result: {
-        context: {
-            apiVersion: string;
-            slot: number;
-        };
-        value: [
-            {
-                confirmationStatus: string;
-                confirmations: number;
-                err: string | null;
-                slot: number;
-            },
-        ];
-    } | null;
-}
-
 export async function getRecentPrioritizationFees(PROD: boolean): Promise<number> {
     let feeMicroLamports = 100000;
 
@@ -206,19 +132,6 @@ export async function getRecentPrioritizationFees(PROD: boolean): Promise<number
     }
 
     return feeMicroLamports;
-}
-
-export async function check_signature(bearer: string, signature: string): Promise<SignatureResponseData | null> {
-    var body = { id: 1, jsonrpc: "2.0", method: "getSignatureStatuses", params: [[signature], { searchTransactionHistory: true }] };
-
-    var response_json = await postData(Config.RPC_NODE, bearer, body);
-    let transaction_response: SignatureResponseData = response_json;
-
-    let valid_json = check_json(response_json);
-
-    if (valid_json) return transaction_response;
-
-    return null;
 }
 
 export interface MintData {
@@ -513,7 +426,6 @@ export function serialise_basic_instruction(instruction: number): Buffer {
 ////////////////////// LetsCook Instructions and MetaData /////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 export const enum LaunchInstruction {
     init = 0,
     create_game = 1,
@@ -547,109 +459,6 @@ export const enum LaunchInstruction {
     add_trade_rewards = 29,
 }
 
-export class myU64 {
-    constructor(readonly value: bignum) {}
-
-    static readonly struct = new BeetStruct<myU64>([["value", u64]], (args) => new myU64(args.value!), "myU64");
-}
-
-export class ListingData {
-    constructor(
-        readonly account_type: number,
-        readonly id: bignum,
-        readonly mint: PublicKey,
-        readonly name: string,
-        readonly symbol: string,
-        readonly decimals: number,
-        readonly icon: string,
-        readonly meta_url: string,
-        readonly banner: string,
-        readonly description: string,
-        readonly positive_votes: number,
-        readonly negative_votes: number,
-        readonly socials: string[],
-    ) {}
-
-    static readonly struct = new FixableBeetStruct<ListingData>(
-        [
-            ["account_type", u8],
-            ["id", u64],
-            ["mint", publicKey],
-            ["name", utf8String],
-            ["symbol", utf8String],
-            ["decimals", u8],
-            ["icon", utf8String],
-            ["meta_url", utf8String],
-            ["banner", utf8String],
-            ["description", utf8String],
-            ["positive_votes", u32],
-            ["negative_votes", u32],
-            ["socials", array(utf8String)],
-        ],
-        (args) =>
-            new ListingData(
-                args.account_type!,
-                args.id!,
-                args.mint!,
-                args.name!,
-                args.symbol!,
-                args.decimals!,
-                args.icon!,
-                args.meta_url!,
-                args.banner!,
-                args.description!,
-                args.positive_votes!,
-                args.negative_votes!,
-                args.socials!,
-            ),
-        "ListingData",
-    );
-}
-
-
-export class UserStats {
-    constructor(
-        readonly flags: number[],
-        readonly values: number[],
-        readonly amounts: bignum[],
-        readonly achievements: number[],
-    ) {}
-
-    static readonly struct = new FixableBeetStruct<UserStats>(
-        [
-            ["flags", array(u8)],
-            ["values", array(u32)],
-            ["amounts", array(u64)],
-            ["achievements", array(u8)],
-        ],
-        (args) => new UserStats(args.flags!, args.values!, args.amounts!, args.achievements!),
-        "UserStats",
-    );
-}
-
-export class UserData {
-    constructor(
-        readonly account_type: number,
-        readonly user_key: PublicKey,
-        readonly user_name: string,
-        readonly total_points: number,
-        readonly votes: number[],
-        readonly stats: UserStats,
-    ) {}
-
-    static readonly struct = new FixableBeetStruct<UserData>(
-        [
-            ["account_type", u8],
-            ["user_key", publicKey],
-            ["user_name", utf8String],
-            ["total_points", u32],
-            ["votes", array(u64)],
-            ["stats", UserStats.struct],
-        ],
-        (args) => new UserData(args.account_type!, args.user_key!, args.user_name!, args.total_points!, args.votes!, args.stats!),
-        "UserData",
-    );
-}
 export interface GPAccount {
     pubkey: PublicKey;
     data: Buffer;
@@ -686,30 +495,4 @@ export async function RunGPA(): Promise<GPAccount[]> {
     }
 
     return result;
-}
-
-
-class HypeVote_Instruction {
-    constructor(
-        readonly instruction: number,
-        readonly launch_type: number,
-        readonly vote: number,
-    ) {}
-
-    static readonly struct = new BeetStruct<HypeVote_Instruction>(
-        [
-            ["instruction", u8],
-            ["launch_type", u8],
-            ["vote", u8],
-        ],
-        (args) => new HypeVote_Instruction(args.instruction!, args.launch_type!, args.vote!),
-        "HypeVote_Instruction",
-    );
-}
-
-export function serialise_HypeVote_instruction(launch_type: number, vote: number): Buffer {
-    const data = new HypeVote_Instruction(LaunchInstruction.hype_vote, launch_type, vote);
-    const [buf] = HypeVote_Instruction.struct.serialize(data);
-
-    return buf;
 }
