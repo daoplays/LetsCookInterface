@@ -1,18 +1,13 @@
-import { PublicKey, Keypair, LAMPORTS_PER_SOL, AccountInfo } from "@solana/web3.js";
+import { PublicKey, Keypair } from "@solana/web3.js";
 import {
     FixableBeetStruct,
-    BeetStruct,
-    uniformFixedSizeArray,
     u8,
     u16,
     u32,
     u64,
-    i64,
     bignum,
     utf8String,
     array,
-    coption,
-    COption,
     DataEnumKeyAsKind,
     dataEnum,
     BeetArgsStruct,
@@ -20,18 +15,10 @@ import {
     FixableBeet,
 } from "@metaplex-foundation/beet";
 import { publicKey } from "@metaplex-foundation/beet-solana";
-import { Wallet, WalletContextState, useWallet } from "@solana/wallet-adapter-react";
-
 import { CollectionKeys, Extensions, Socials } from "../Solana/constants";
 import { bignum_to_num, LaunchInstruction, request_raw_account_data } from "../Solana/state";
-
-import { Box } from "@chakra-ui/react";
-
 import BN from "bn.js";
-import bs58 from "bs58";
 
-import { WalletDisconnectButton } from "@solana/wallet-adapter-react-ui";
-import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 export interface CollectionPluginData {
     // mint probability

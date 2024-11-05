@@ -6,28 +6,23 @@ import {
     request_raw_account_data,
     getRecentPrioritizationFees,
 } from "../../components/Solana/state";
-import { CollectionData, AssignmentData, request_assignment_data } from "../../components/collection/collectionState";
+import { CollectionData, request_assignment_data } from "../../components/collection/collectionState";
 import {
     ComputeBudgetProgram,
-    SYSVAR_RENT_PUBKEY,
     PublicKey,
     Transaction,
     TransactionInstruction,
     Connection,
     Keypair,
-    AccountMeta,
 } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PROGRAM, Config, SYSTEM_KEY, SOL_ACCOUNT_SEED, CollectionKeys, METAPLEX_META, CORE } from "../../components/Solana/constants";
 import { useCallback, useRef, useState } from "react";
-import bs58 from "bs58";
 import { LaunchKeys } from "../../components/Solana/constants";
-import useAppRoot from "../../context/useAppRoot";
 import { toast } from "react-toastify";
 
-const useMintNFT = (launchData: CollectionData, updateData: boolean = false) => {
+const useMintNFT = (launchData: CollectionData) => {
     const wallet = useWallet();
-    const { checkProgramData, mintData } = useAppRoot();
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -55,9 +50,6 @@ const useMintNFT = (launchData: CollectionData, updateData: boolean = false) => 
             autoClose: 3000,
         });
 
-        if (updateData) {
-            await checkProgramData();
-        }
     }, []);
 
     const transaction_failed = useCallback(async () => {

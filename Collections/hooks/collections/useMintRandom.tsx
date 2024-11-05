@@ -5,6 +5,7 @@ import {
     uInt32ToLEBytes,
     request_raw_account_data,
     getRecentPrioritizationFees,
+    MintData,
 } from "../../components/Solana/state";
 import { CollectionData, request_assignment_data } from "../../components/collection/collectionState";
 import {
@@ -14,22 +15,18 @@ import {
     TransactionInstruction,
     Connection,
     Keypair,
-    SYSVAR_RENT_PUBKEY,
     AccountMeta,
 } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, getTransferHook, resolveExtraAccountMeta, ExtraAccountMetaAccountDataLayout } from "@solana/spl-token";
+import { getTransferHook, resolveExtraAccountMeta, ExtraAccountMetaAccountDataLayout } from "@solana/spl-token";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { PROGRAM, Config, SYSTEM_KEY, SOL_ACCOUNT_SEED, CollectionKeys, METAPLEX_META, CORE } from "../../components/Solana/constants";
+import { PROGRAM, Config, SYSTEM_KEY, SOL_ACCOUNT_SEED, CollectionKeys, CORE } from "../../components/Solana/constants";
 import { useCallback, useRef, useState, useEffect } from "react";
-import bs58 from "bs58";
 import { LaunchKeys, LaunchFlags } from "../../components/Solana/constants";
-import useAppRoot from "../../context/useAppRoot";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
+import {  getAssociatedTokenAddress } from "@solana/spl-token";
 import { toast } from "react-toastify";
 
-const useMintRandom = (launchData: CollectionData, updateData: boolean = false) => {
+const useMintRandom = (launchData: CollectionData, tokenMint: MintData) => {
     const wallet = useWallet();
-    const { checkProgramData, mintData } = useAppRoot();
     const [isLoading, setIsLoading] = useState(false);
     const signature_ws_id = useRef<number | null>(null);
 
@@ -54,10 +51,6 @@ const useMintRandom = (launchData: CollectionData, updateData: boolean = false) 
             isLoading: false,
             autoClose: 3000,
         });
-
-        if (updateData) {
-            await checkProgramData();
-        }
     }, []);
 
     const transaction_failed = useCallback(async () => {
@@ -101,22 +94,6 @@ const useMintRandom = (launchData: CollectionData, updateData: boolean = false) 
 
         let program_sol_account = PublicKey.findProgramAddressSync([uInt32ToLEBytes(SOL_ACCOUNT_SEED)], PROGRAM)[0];
 
-        let token_mint = launchData.keys[CollectionKeys.MintAddress];
-        let mint_account = mintData.get(launchData.keys[CollectionKeys.MintAddress].toString());
-        let user_token_account_key = await getAssociatedTokenAddress(
-            token_mint, // mint
-            wallet.publicKey, // owner
-            true, // allow owner off curve
-            mint_account.token_program,
-        );
-
-        let pda_token_account_key = await getAssociatedTokenAddress(
-            token_mint, // mint
-            program_sol_account, // owner
-            true, // allow owner off curve
-            mint_account.token_program,
-        );
-
         let nft_assignment_account = PublicKey.findProgramAddressSync(
             [wallet.publicKey.toBytes(), launchData.keys[CollectionKeys.CollectionMint].toBytes(), Buffer.from("assignment")],
             PROGRAM,
@@ -131,12 +108,10 @@ const useMintRandom = (launchData: CollectionData, updateData: boolean = false) 
             return;
         }
 
-        let user_data_account = PublicKey.findProgramAddressSync([wallet.publicKey.toBytes(), Buffer.from("User")], PROGRAM)[0];
-
         let nft_mint_keypair = new Keypair();
         let nft_mint_account = nft_mint_keypair.publicKey;
 
-        let transfer_hook = getTransferHook(mint_account.mint);
+        let transfer_hook = getTransferHook(tokenMint.mint);
 
         let transfer_hook_program_account: PublicKey | null = null;
         let transfer_hook_validation_account: PublicKey | null = null;

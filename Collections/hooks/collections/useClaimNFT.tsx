@@ -4,6 +4,7 @@ import {
     uInt32ToLEBytes,
     request_raw_account_data,
     getRecentPrioritizationFees,
+    MintData,
 } from "../../components/Solana/state";
 import { CollectionData, request_assignment_data } from "../../components/collection/collectionState";
 import {
@@ -11,85 +12,20 @@ import {
     PublicKey,
     Transaction,
     TransactionInstruction,
-    Connection,
     Keypair,
-    SYSVAR_RENT_PUBKEY,
     AccountMeta,
 } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, getTransferHook, resolveExtraAccountMeta, ExtraAccountMetaAccountDataLayout } from "@solana/spl-token";
+import { getTransferHook, resolveExtraAccountMeta, ExtraAccountMetaAccountDataLayout } from "@solana/spl-token";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PROGRAM, Config, SYSTEM_KEY, SOL_ACCOUNT_SEED, CollectionKeys, METAPLEX_META, TIMEOUT } from "../../components/Solana/constants";
+import { PROGRAM, Config, SYSTEM_KEY, SOL_ACCOUNT_SEED, CollectionKeys, TIMEOUT } from "../../components/Solana/constants";
 import { useCallback, useRef, useState, useEffect } from "react";
-import bs58 from "bs58";
 import { LaunchKeys } from "../../components/Solana/constants";
-import useAppRoot from "../../context/useAppRoot";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 import useMintNFT from "./useMintNFT";
 import { toast } from "react-toastify";
 import { BeetStruct, FixableBeetStruct, array, bignum, u64, u8, uniformFixedSizeArray } from "@metaplex-foundation/beet";
 import { publicKey } from "@metaplex-foundation/beet-solana";
 import useMintRandom from "./useMintRandom";
-
-class OraoTokenFeeConfig {
-    constructor(
-        readonly discriminator: number[],
-        readonly mint: PublicKey,
-        readonly treasury: PublicKey,
-        readonly fee: bignum,
-    ) {}
-
-    static readonly struct = new FixableBeetStruct<OraoTokenFeeConfig>(
-        [
-            ["discriminator", uniformFixedSizeArray(u8, 8)],
-            ["mint", publicKey],
-            ["treasury", publicKey],
-            ["fee", u64],
-        ],
-        (args) => new OraoTokenFeeConfig(args.discriminator!, args.mint!, args.treasury!, args.fee!),
-        "OraoTokenFeeConfig",
-    );
-}
-
-class OraoNetworkConfig {
-    constructor(
-        readonly discriminator: number[],
-        readonly treasury: PublicKey,
-        readonly requestFee: bignum,
-        readonly fulfilmentAuthorities: PublicKey[],
-        readonly tokenFeeConfig: OraoTokenFeeConfig,
-    ) {}
-
-    static readonly struct = new FixableBeetStruct<OraoNetworkConfig>(
-        [
-            ["discriminator", uniformFixedSizeArray(u8, 8)],
-            ["treasury", publicKey],
-            ["requestFee", u64],
-            ["fulfilmentAuthorities", array(publicKey)],
-            ["tokenFeeConfig", OraoTokenFeeConfig.struct],
-        ],
-        (args) =>
-            new OraoNetworkConfig(args.discriminator!, args.treasury!, args.requestFee!, args.fulfilmentAuthorities!, args.tokenFeeConfig!),
-        "OraoNetworkConfig",
-    );
-}
-
-class OraoNetworkState {
-    constructor(
-        readonly discriminator: number[],
-        readonly config: OraoNetworkConfig,
-        readonly numRecieved: bignum,
-    ) {}
-
-    static readonly struct = new FixableBeetStruct<OraoNetworkState>(
-        [
-            ["discriminator", uniformFixedSizeArray(u8, 8)],
-            ["config", OraoNetworkConfig.struct],
-            ["numRecieved", u64],
-        ],
-        (args) => new OraoNetworkState(args.discriminator!, args.config!, args.numRecieved!),
-        "OraoNetworkState",
-    );
-}
 
 class OraoRandomnessResponse {
     constructor(
@@ -133,17 +69,6 @@ function serialise_claim_nft_instruction(seed: number[]): Buffer {
     return buf;
 }
 
-function check_randomness(data: number[]) {
-    let valid = false;
-    for (let i = 0; i < data.length; i++) {
-        if (data[i] != 0) {
-            valid = true;
-            break;
-        }
-    }
-
-    return valid;
-}
 class ClaimNFT_Instruction {
     constructor(
         readonly instruction: number,
@@ -160,16 +85,15 @@ class ClaimNFT_Instruction {
     );
 }
 
-const useClaimNFT = (launchData: CollectionData, updateData: boolean = false) => {
+const useClaimNFT = (launchData: CollectionData, tokenMint : MintData, whitelist : MintData | null) => {
     const wallet = useWallet();
     const { connection } = useConnection();
 
-    const { checkProgramData, mintData } = useAppRoot();
     const [isLoading, setIsLoading] = useState(false);
     const [OraoRandoms, setOraoRandoms] = useState<number[]>([]);
 
     const { MintNFT } = useMintNFT(launchData);
-    const { MintRandom } = useMintRandom(launchData);
+    const { MintRandom } = useMintRandom(launchData, tokenMint);
     const signature_ws_id = useRef<number | null>(null);
 
     const check_signature_update = useCallback(async (result: any) => {
@@ -263,28 +187,27 @@ const useClaimNFT = (launchData: CollectionData, updateData: boolean = false) =>
         let program_sol_account = PublicKey.findProgramAddressSync([uInt32ToLEBytes(SOL_ACCOUNT_SEED)], PROGRAM)[0];
 
         let token_mint = launchData.keys[CollectionKeys.MintAddress];
-        let mint_info = mintData.get(launchData.keys[CollectionKeys.MintAddress].toString());
-        let mint_account = mint_info.mint;
+        let mint_account = tokenMint.mint;
 
         let user_token_account_key = await getAssociatedTokenAddress(
             token_mint, // mint
             wallet.publicKey, // owner
             true, // allow owner off curve
-            mint_info.token_program,
+            tokenMint.token_program,
         );
 
         let pda_token_account_key = await getAssociatedTokenAddress(
             token_mint, // mint
             program_sol_account, // owner
             true, // allow owner off curve
-            mint_info.token_program,
+            tokenMint.token_program,
         );
 
         let team_token_account_key = await getAssociatedTokenAddress(
             token_mint, // mint
             launchData.keys[CollectionKeys.TeamWallet], // owner
             true, // allow owner off curve
-            mint_info.token_program,
+            tokenMint.token_program,
         );
 
         let token_destination_account = pda_token_account_key;
@@ -355,23 +278,18 @@ const useClaimNFT = (launchData: CollectionData, updateData: boolean = false) =>
         let whitelist_token_program = PROGRAM;
 
         console.log("collection has ", launchData.plugins.length, " plugins");
-        for (let i = 0; i < launchData.plugins.length; i++) {
-            if (launchData.plugins[i]["__kind"] === "Whitelist") {
-                console.log("Have whitelist plugin");
-                console.log(launchData.plugins[i]["key"].toString());
-                whitelist_mint = launchData.plugins[i]["key"];
-                let whitelist = mintData.get(whitelist_mint.toString());
-                console.log("whitelist token:", whitelist);
-                whitelist_account = await getAssociatedTokenAddress(
-                    whitelist_mint, // mint
-                    wallet.publicKey, // owner
-                    true, // allow owner off curve
-                    whitelist.token_program,
-                );
+        
+        if (whitelist) {
+            whitelist_account = await getAssociatedTokenAddress(
+                whitelist.mint.address, // mint
+                wallet.publicKey, // owner
+                true, // allow owner off curve
+                whitelist.token_program,
+            );
 
-                whitelist_token_program = whitelist.token_program;
-            }
+            whitelist_token_program = whitelist.token_program;
         }
+    
 
         const instruction_data = serialise_claim_nft_instruction(Array.from(key_bytes));
 
@@ -393,7 +311,7 @@ const useClaimNFT = (launchData: CollectionData, updateData: boolean = false) =>
             { pubkey: launchData.keys[CollectionKeys.TeamWallet], isSigner: false, isWritable: true },
 
             { pubkey: SYSTEM_KEY, isSigner: false, isWritable: false },
-            { pubkey: mint_info.token_program, isSigner: false, isWritable: false },
+            { pubkey: tokenMint.token_program, isSigner: false, isWritable: false },
 
             { pubkey: orao_random, isSigner: false, isWritable: true },
             { pubkey: orao_treasury, isSigner: false, isWritable: true },

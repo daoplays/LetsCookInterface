@@ -53,7 +53,6 @@ const Home = () => {
 
     const [nftAmount, setNFTAmount] = useState<number>(0);
     const [token_amount, setTokenAmount] = useState<number>(0);
-
     const [isTokenToNFT, setIsTokenToNFT] = useState(true);
 
     const { isOpen: isAssetModalOpen, onOpen: openAssetModal, onClose: closeAssetModal } = useDisclosure();
@@ -70,10 +69,9 @@ const Home = () => {
     const { assignmentData, validRandoms, asset, assetMeta, error: assignmentError } = useAssignmentData({ collection: collection });
 
     const { MintNFT, isLoading: isMintLoading } = useMintNFT(collection);
-    const { WrapNFT, isLoading: isWrapLoading } = useWrapNFT(collection);
-
-    const { MintRandom, isLoading: isMintRandomLoading } = useMintRandom(collection);
-    const { ClaimNFT, isLoading: isClaimLoading } = useClaimNFT(collection);
+    const { WrapNFT, isLoading: isWrapLoading } = useWrapNFT(collection, tokenMint);
+    const { MintRandom, isLoading: isMintRandomLoading } = useMintRandom(collection, tokenMint);
+    const { ClaimNFT, isLoading: isClaimLoading } = useClaimNFT(collection, tokenMint, whitelistMint);
 
     const mintAddress = useMemo(() => {
         return collection?.keys?.[CollectionKeys.MintAddress] || null;
@@ -132,8 +130,7 @@ const Home = () => {
         fetchNFTBalance();
     }, [collection, wallet, fetchNFTBalance]);
 
-    if (!pageName) return;
-
+    console.log("in main page", collection, tokenMint)
     if (collection === null || tokenMint === null) return <Loader />;
 
     const enoughTokenBalance = tokenBalance >= bignum_to_num(collection.swap_price) / Math.pow(10, collection.token_decimals);
@@ -580,6 +577,7 @@ const Home = () => {
                     asset_image={assetMeta}
                     style={modalStyle}
                     isLoading={isLoading}
+                    tokenMint={tokenMint}
                 />
             </main>
         </>

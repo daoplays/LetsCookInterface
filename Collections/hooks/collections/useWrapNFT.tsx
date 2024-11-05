@@ -7,37 +7,29 @@ import {
     getRecentPrioritizationFees,
     MintData,
 } from "../../components/Solana/state";
-import { CollectionData, AssignmentData, request_assignment_data } from "../../components/collection/collectionState";
+import { CollectionData } from "../../components/collection/collectionState";
 import {
     ComputeBudgetProgram,
-    SYSVAR_RENT_PUBKEY,
     PublicKey,
     Transaction,
     TransactionInstruction,
     Connection,
-    Keypair,
     AccountMeta,
 } from "@solana/web3.js";
 import {
     ASSOCIATED_TOKEN_PROGRAM_ID,
     getAssociatedTokenAddress,
-    getAssociatedTokenAddressSync,
-    unpackAccount,
-    Account,
     getTransferHook,
     resolveExtraAccountMeta,
     ExtraAccountMetaAccountDataLayout,
 } from "@solana/spl-token";
-import { Key, getAssetV1GpaBuilder, updateAuthority, AssetV1, deserializeAssetV1 } from "@metaplex-foundation/mpl-core";
-import type { RpcAccount, PublicKey as umiKey } from "@metaplex-foundation/umi";
+import { Key, getAssetV1GpaBuilder, updateAuthority, AssetV1 } from "@metaplex-foundation/mpl-core";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { publicKey } from "@metaplex-foundation/umi";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { PROGRAM, Config, SYSTEM_KEY, SOL_ACCOUNT_SEED, CollectionKeys, METAPLEX_META, CORE } from "../../components/Solana/constants";
+import { PROGRAM, Config, SYSTEM_KEY, SOL_ACCOUNT_SEED, CollectionKeys, CORE } from "../../components/Solana/constants";
 import { useCallback, useRef, useState } from "react";
-import bs58 from "bs58";
 import { LaunchKeys } from "../../components/Solana/constants";
-import useAppRoot from "../../context/useAppRoot";
 import { toast } from "react-toastify";
 
 export const GetWrapInstructions = async (
@@ -199,9 +191,8 @@ export const GetWrapInstructions = async (
     return instructions;
 };
 
-const useWrapNFT = (launchData: CollectionData, updateData: boolean = false) => {
+const useWrapNFT = (launchData: CollectionData, tokenMint: MintData) => {
     const wallet = useWallet();
-    const { checkProgramData, mintData } = useAppRoot();
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -229,9 +220,6 @@ const useWrapNFT = (launchData: CollectionData, updateData: boolean = false) => 
             autoClose: 3000,
         });
 
-        if (updateData) {
-            await checkProgramData();
-        }
     }, []);
 
     const transaction_failed = useCallback(async () => {
@@ -275,9 +263,7 @@ const useWrapNFT = (launchData: CollectionData, updateData: boolean = false) => 
 
         setIsLoading(true);
 
-        let mint_account = mintData.get(launchData.keys[CollectionKeys.MintAddress].toString());
-
-        let instructions = await GetWrapInstructions(launchData, mint_account, wallet.publicKey, asset_key);
+        let instructions = await GetWrapInstructions(launchData, tokenMint, wallet.publicKey, asset_key);
 
         let txArgs = await get_current_blockhash("");
 

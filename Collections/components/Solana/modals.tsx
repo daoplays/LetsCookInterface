@@ -8,6 +8,7 @@ import styles from "../../styles/LaunchDetails.module.css";
 import { SYSTEM_KEY } from "./constants";
 import Image from "next/image";
 import useMintRandom from "../../hooks/collections/useMintRandom";
+import { MintData } from "./state";
 
 interface RecievedAssetModalProps {
     isWarningOpened?: boolean;
@@ -20,6 +21,7 @@ interface RecievedAssetModalProps {
     curated?: boolean;
     isLoading: boolean;
     have_randoms: boolean;
+    tokenMint: MintData;
 }
 
 export interface ReceivedAssetModalStyle {
@@ -52,10 +54,11 @@ export function ReceivedAssetModal({
     curated,
     isLoading,
     have_randoms,
+    tokenMint
 }: RecievedAssetModalProps) {
     const { sm } = useResponsive();
     const { MintNFT, isLoading: isMintLoading } = useMintNFT(collection);
-    const { MintRandom, isLoading: isMintRandomLoading } = useMintRandom(collection);
+    const { MintRandom, isLoading: isMintRandomLoading } = useMintRandom(collection, tokenMint);
 
     function filterAttributes(attributes) {
         return attributes.filter(function (item: Attribute) {

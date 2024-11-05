@@ -3,7 +3,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { MintData, TokenAccount, bignum_to_num, request_token_amount } from "../../components/Solana/state";
-import useAppRoot from "../../context/useAppRoot";
 import { setMintData } from "../../components/collection/tokens";
 
 interface UseTokenBalanceProps {
@@ -20,9 +19,6 @@ const useTokenBalance = (props: UseTokenBalanceProps | null) => {
     const { connection } = useConnection();
     const wallet = useWallet();
 
-    // Get the mintData from the app's root context
-    const { mintData } = useAppRoot();
-
     // Ref to store the subscription ID, persists across re-renders
     const subscriptionRef = useRef<number | null>(null);
 
@@ -34,24 +30,20 @@ const useTokenBalance = (props: UseTokenBalanceProps | null) => {
     const getMintData = useCallback(async () => {
         if (haveMintData.current) return;
 
-        if (!mintData || !mintAddress) {
+        if (!mintAddress) {
             setError("Mint data is not available");
             setTokenMint(null);
             return;
         }
-        const mint = mintData.get(mintAddress.toString());
-        if (!mint) {
-            // if we dont have the mint data, we should fetch it
-            let newMintData = await setMintData(mintAddress.toString());
-            if (newMintData) {
-                setTokenMint(newMintData);
-                haveMintData.current = true;
-            }
-            return;
+
+        // if we dont have the mint data, we should fetch it
+        let newMintData = await setMintData(mintAddress.toString());
+        if (newMintData) {
+            setTokenMint(newMintData);
+            haveMintData.current = true;
         }
-        setTokenMint(mint);
-        haveMintData.current = true;
-    }, [mintData, mintAddress]);
+
+    }, [mintAddress]);
 
     // Function to get the user's token account address
     const getUserTokenAccount = useCallback(() => {
